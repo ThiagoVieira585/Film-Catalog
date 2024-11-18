@@ -1,12 +1,10 @@
 package com.fc.fullcycle.admin.catalog.domain.category;
 
+import com.fc.fullcycle.admin.catalog.domain.AggregateRoot;
+
 import java.time.Instant;
-import java.util.UUID;
 
-import static java.util.UUID.randomUUID;
-
-public class Category {
-    private String id;
+public class Category extends AggregateRoot<CategoryID> {
     private String name;
     private String description;
     private boolean active;
@@ -15,32 +13,30 @@ public class Category {
     private Instant deletedAt;
 
     private Category(
-            final Instant deletedAt,
-            final Instant updatedAt,
-            final Instant createdAt,
-            final boolean active,
-            final String description,
-            final String name,
-            final String id
+            final CategoryID anId,
+            final String aName,
+            final String aDescription,
+            final boolean isActive,
+            final Instant aCreationDate,
+            final Instant aUpdateDate,
+            final Instant aDeleteDate
     ) {
-        this.deletedAt = deletedAt;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-        this.active = active;
-        this.description = description;
-        this.name = name;
-        this.id = id;
+        super(anId);
+        this.name = aName;
+        this.description = aDescription;
+        this.active = isActive;
+        this.createdAt = aCreationDate;
+        this.updatedAt = aUpdateDate;
+        this.deletedAt = aDeleteDate;
     }
 
     public static Category newCategory(final String aName, final String aDescription, final boolean isActive) {
-        final var id = UUID.randomUUID().toString();
+        final var id = CategoryID.unique();
         final var now = Instant.now();
-        return new Category(null, now, now, isActive, aDescription,aName, id);
-
-
+        return new Category(id, aName, aDescription, isActive, now, now, null);
     }
 
-    public String getId() {
+    public CategoryID getId() {
         return id;
     }
 

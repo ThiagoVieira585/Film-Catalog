@@ -4,6 +4,6 @@ import com.fc.fullcycle.admin.catalog.domain.category.Category;
 
 public class UseCase {
     public Category execute() {
-        return new Category();
+        return Category.newCategory("name", "description", true);
     }
 }
