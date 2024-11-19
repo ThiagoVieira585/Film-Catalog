@@ -1,7 +1,7 @@
 package com.fc.fullcycle.admin.catalog.domain;
 
-public class AggregateRoot<ID extends Identifier> extends Entity<ID> {
-    protected AggregateRoot(final ID id) {
+public abstract class AggregateRoot<ID extends Identifier> extends Entity<ID> {
+    protected AggregateRoot(ID id) {
         super(id);
     }
 }
