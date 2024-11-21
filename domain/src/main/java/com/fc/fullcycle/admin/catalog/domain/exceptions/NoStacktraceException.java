@@ -1,8 +1,8 @@
 package com.fc.fullcycle.admin.catalog.domain.exceptions;
 
-public class NoStacktraceException extends RuntimeException{
+public class NoStacktraceException extends RuntimeException {
     public NoStacktraceException(final String message) {
-        super(message, null);
+        this(message, null);
     }
 
     public NoStacktraceException(final String message, final Throwable cause) {
