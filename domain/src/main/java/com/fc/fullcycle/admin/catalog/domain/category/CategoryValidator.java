@@ -6,6 +6,9 @@ import com.fc.fullcycle.admin.catalog.domain.validation.ValidatorError;
 
 public class CategoryValidator extends Validator {
 
+    private static final int NAME_MIN_LENGHT = 3;
+    private static final int NAME_MAX_LENGHT = 255;
+
     private final Category category;
 
     protected CategoryValidator(final Category aCategory, final ValidationHandler aHandler) {
@@ -22,16 +25,16 @@ public class CategoryValidator extends Validator {
         final String name = category.getName();
         if(name==null) {
             this.validationHandler().append(new ValidatorError("'name' must not be null"));
-            return;
+
         }
         if(name.isBlank()) {
             this.validationHandler().append(new ValidatorError("'name' must not be empty"));
-            return;
+
         }
         final int length = name.trim().length();
-        if (length >255 && length<3){
+        if (length > NAME_MAX_LENGHT || length < NAME_MIN_LENGHT){
             this.validationHandler().append(new ValidatorError("'name' must be between 3 and 255"));
-            return;
+
         }
     }
 }
