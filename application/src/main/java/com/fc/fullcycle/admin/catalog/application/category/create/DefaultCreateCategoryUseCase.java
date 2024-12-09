@@ -2,6 +2,7 @@ package com.fc.fullcycle.admin.catalog.application.category.create;
 
 import com.fc.fullcycle.admin.catalog.domain.category.Category;
 import com.fc.fullcycle.admin.catalog.domain.category.CategoryGateway;
+import com.fc.fullcycle.admin.catalog.domain.validation.handler.Notification;
 import com.fc.fullcycle.admin.catalog.domain.validation.handler.ThrowsValidationHandler;
 
 import java.util.Objects;
@@ -20,9 +21,14 @@ public class DefaultCreateCategoryUseCase extends CreateCategoryUseCase {
         final var aDescription = aCommand.description();
         final boolean isActive = aCommand.isActive();
 
-        final var aCategory = Category.newCategory(aName, aDescription, isActive);
-        aCategory.validate(new ThrowsValidationHandler());
+        final var notification =  Notification.create();
 
+        final var aCategory = Category.newCategory(aName, aDescription, isActive);
+        aCategory.validate(notification);
+
+        if(notification.hasErrors()){
+
+        }
         return CreateCategoryOutput.from(this.categoryGateway.create(aCategory));
 
     }
