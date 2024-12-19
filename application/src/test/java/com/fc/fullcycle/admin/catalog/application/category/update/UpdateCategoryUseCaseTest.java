@@ -1,5 +1,7 @@
 package com.fc.fullcycle.admin.catalog.application.category.update;
 
+import com.fc.fullcycle.admin.catalog.application.update.DefaultUpdateCategoryUseCase;
+import com.fc.fullcycle.admin.catalog.application.update.UpdateCategoryCommand;
 import com.fc.fullcycle.admin.catalog.domain.category.Category;
 import com.fc.fullcycle.admin.catalog.domain.category.CategoryGateway;
 import org.junit.jupiter.api.Assertions;
@@ -35,10 +37,10 @@ public class UpdateCategoryUseCaseTest {
 
         final var expectedId = aCategory.getId();
 
-        final var aCommand = UpdateCategoryCommand.with(expectedId.getId().getValue(), expectedName, expectedDescription, expectedIsActive);
+        final var aCommand = UpdateCategoryCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedIsActive);
 
         Mockito.when(categoryGateway.findById(eq(expectedId)))
-                .thenReturn(Optional.of(aCategory));
+                .thenReturn(Optional.of(aCategory.clone()));
         Mockito.when(categoryGateway.update(any()))
                 .thenAnswer(returnsFirstArg());
 
