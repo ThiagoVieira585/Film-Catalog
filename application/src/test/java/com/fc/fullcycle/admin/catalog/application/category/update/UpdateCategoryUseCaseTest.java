@@ -62,4 +62,66 @@ public class UpdateCategoryUseCaseTest {
                                 && Objects.isNull(aUpadateCategory.getDeletedAt())
         ));
         }
+    @Test
+    public void givenAInvalidCommand_whenCallsUpdateCategory_shouldReturnDomainException() {
+        final var aCategory = Category.newCategory("Movie", null, true);
+
+        final String expectedName = null;
+        final var expectedDescription = "The category most watch";
+        final var expectedIsActive = true;
+        final var expectedErrorMensage = "'name' must not be null";
+        final var expectedErrorCount = 1;
+        final var expectedId = aCategory.getId();
+
+        final var aCommand = UpdateCategoryCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedIsActive);
+
+        Mockito.when(categoryGateway.findById(eq(expectedId)))
+                .thenReturn(Optional.of(aCategory.clone()));
+
+        final var notification = useCase.execute(aCommand).getLeft();
+
+        Assertions.assertEquals(expectedErrorCount, notification.getErrors().size());
+        Assertions.assertEquals(expectedErrorMensage, notification.firstError().message());
+
+        Mockito.verify(categoryGateway, Mockito.times(0)).update(any());
+    }
+    @Test
+    public void givenAValidInactiveCommand_whenCallUpdateCategory_shouldReturnInactivedCategoryId() {
+        final var aCategory = Category.newCategory("Movie", null, true);
+
+        final var expectedName = "Movies";
+        final var expectedDescription = "The category most watch!";
+        final var expectedIsActive = false;
+        final var expectedId = aCategory.getId();
+
+        final var aCommand = UpdateCategoryCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedIsActive);
+
+        Mockito.when(categoryGateway.findById(eq(expectedId)))
+                .thenReturn(Optional.of(aCategory.clone()));
+        Mockito.when(categoryGateway.update(any()))
+                .thenAnswer(returnsFirstArg());
+
+        Assertions.assertTrue(aCategory.isActive());
+        Assertions.assertNull(aCategory.getDeletedAt());
+
+        final var actualOutput = useCase.execute(aCommand).get();
+
+        Assertions.assertNotNull(actualOutput);
+        Assertions.assertNotNull(actualOutput.id());
+
+        Mockito.verify(categoryGateway, Mockito.times(1)).findById(eq(expectedId));
+
+        Mockito.verify(categoryGateway, Mockito.times(1)).update(argThat(
+                aUpadateCategory ->
+                        Objects.equals(expectedName, aUpadateCategory.getName())
+                            && Objects.equals(expectedDescription, aUpadateCategory.getDescription())
+                            && Objects.equals(expectedIsActive, aUpadateCategory.isActive())
+                            && Objects.equals(expectedId, aUpadateCategory.getId())
+                            && Objects.equals(aCategory.getCreatedAt(), aUpadateCategory.getCreatedAt())
+                            && aCategory.getUpdatedAt().isBefore(aUpadateCategory.getUpdatedAt())
+                            && Objects.nonNull(aUpadateCategory.getDeletedAt())
+
+        ));
+
+    }
 }
